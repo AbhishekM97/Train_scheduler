@@ -22,3 +22,15 @@ var name;
 var Destination;
 var FirstT;
 var Frequency;
+
+function createTableData(){
+    //Getting all the values from the input form
+    // store the values in firebase first.
+    // create table data elements and append that to table body.
+    name = $("#TrainName").val();
+    Destination = $("#Destination").val();
+    FirstT = $("#FirstTrain").val();
+    Frequency = $("#Frequency").val();
+
+
+}   
