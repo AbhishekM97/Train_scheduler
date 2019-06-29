@@ -1,9 +1,10 @@
-/* take input from the form in the html page.
-    Store into varaibles everytime submit is clicked.
-    from those variables create new table data that is displayed into the webpage.
-    Store arrival and departure data for each train.
-    Utilize Moment.js to manipulate information.
+
+/*  1.create function to collect values from input form.
+    same function stores the values into fire base.
+    2.Create function that uses the given information to append
+    a new table row of data and displays to html page.
 */
+
 var firebaseConfig = {
     apiKey: "AIzaSyB3dJ_Z82BPXUdl34OzZZbfOL4XbYVAAqM",
     authDomain: "trainschedule-2f5f8.firebaseapp.com",
@@ -16,21 +17,30 @@ var firebaseConfig = {
   // Initialize Firebase
   firebase.initializeApp(firebaseConfig);
 
-var database = firebaseConfig.database();
+var database = firebase.database();
 
 var name;
 var Destination;
 var FirstT;
 var Frequency;
 
-function createTableData(){
+function CollectValues(){
     //Getting all the values from the input form
-    // store the values in firebase first.
-    // create table data elements and append that to table body.
     name = $("#TrainName").val();
     Destination = $("#Destination").val();
     FirstT = $("#FirstTrain").val();
     Frequency = $("#Frequency").val();
 
-
+    // calling function to store data in fire base.
+    dataStore();
 }   
+
+function dataStore(){
+    database.ref(name).set({
+        Destination: Destination,
+        FirstTrain: FirstT,
+        Frequency: Frequency
+    });
+}
+
+$("#info").on('click', CollectValues());
