@@ -20,27 +20,68 @@ var firebaseConfig = {
 var database = firebase.database();
 
 var name;
-var Destination;
+var destination;
 var FirstT;
 var Frequency;
 
 function CollectValues(){
     //Getting all the values from the input form
     name = $("#TrainName").val();
-    Destination = $("#Destination").val();
+    destination = $("#Destination").val();
     FirstT = $("#FirstTrain").val();
     Frequency = $("#Frequency").val();
-
     // calling function to store data in fire base.
     dataStore();
 }   
 
+
 function dataStore(){
-    database.ref(name).set({
-        Destination: Destination,
+    var NewTrain = {
+        Name: name,
+        Destination: destination,
         FirstTrain: FirstT,
         Frequency: Frequency
-    });
+    }
+    database.ref().push(NewTrain);
+    $("#TrainName").val("");
+    $("#Destination").val("");
+    $("#FirstTrain").val("");
+    $("#Frequency").val("");
+    
 }
 
-$("#info").on('click', CollectValues());
+database.ref().on("child_added",function(childSnapshot){
+    console.log(childSnapshot.val());
+
+    var name = childSnapshot.val().Name;
+    var destination = childSnapshot.val().Destination;
+    var FirstT = childSnapshot.val().FirstTrain;
+    var Frequency = childSnapshot.val().Frequency;
+
+    var FirstArrivalConverted = moment(FirstT, "HH:mm").subtract(1,"years");
+
+    var currentTime = moment();
+
+    var timeDifference = moment().diff(moment(FirstArrivalConverted),"minutes");
+
+    var tRemainder = timeDifference%Frequency;
+
+    var minutesTillNextTrain = Frequency - tRemainder;
+
+    var nextTrain = moment().add(minutesTillNextTrain,"minutes");
+
+    var newRow = $("<tr>").append(
+        $("<td>").text(name),
+        $("<td>").text(destination),
+        $("<td>").text(Frequency),
+        $("<td>").text(nextTrain),
+        $("<td>").text(minutesTillNextTrain)
+    );
+
+    $("#TrainInfo> tbody").append(newRow);
+});
+
+$("#info").on('click', function(event){
+    event.preventDefault();
+    CollectValues();
+});
